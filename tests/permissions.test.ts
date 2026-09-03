@@ -1,0 +1,2 @@
+import {describe,expect,it} from 'vitest';import {canAccess,requireTenantRecord} from '../lib/permissions';
+describe('tenant foundation',()=>{it('permits only entitled apps',()=>{expect(canAccess(['PRICING'],'PRICING')).toBe(true);expect(canAccess(['PRICING'],'DG_VAULT')).toBe(false)});it('rejects cross-tenant records',()=>{expect(()=>requireTenantRecord({companyId:'tenant-a'},'tenant-b')).toThrow('Forbidden')})})

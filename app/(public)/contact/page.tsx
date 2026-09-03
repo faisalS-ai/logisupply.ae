@@ -1,0 +1,1 @@
+import {Footer,Header} from "@/components/site";export default function Contact(){return <><Header/><main className="shell auth"><p className="eyebrow">Request a demo</p><h1>Let’s move smarter.</h1><label>Name</label><input/><label>Work email</label><input type="email"/><label>Company</label><input/><p><button className="button">Request a demo →</button></p></main><Footer/></>}

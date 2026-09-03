@@ -1,0 +1,3 @@
+import Link from "next/link";
+export function Header(){return <header className="shell nav"><Link className="brand" href="/">Logi<i>Supply</i>.ae</Link><nav><Link href="/apps">Applications</Link><Link href="/pricing">Pricing</Link><Link href="/marketplace">Marketplace</Link><Link href="/contact">Contact</Link></nav><Link className="button secondary" href="/login">Log in</Link><Link className="button" href="/register">Start free</Link></header>}
+export function Footer(){return <footer className="shell footer">© 2026 LogiSupply.ae · <Link href="/legal/privacy">Privacy</Link> · <Link href="/legal/terms">Terms</Link> · <Link href="/legal/refunds">Refunds & cancellation</Link></footer>}

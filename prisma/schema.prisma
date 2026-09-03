@@ -1,0 +1,16 @@
+generator client { provider = "prisma-client-js" }
+datasource db { provider = "postgresql" url = env("DATABASE_URL") }
+
+enum RoleKey { SUPER_ADMIN OWNER COMPANY_ADMIN MANAGER SALES_PRICING OPERATIONS DG_USER FINANCE READ_ONLY DEMO MARKETPLACE_CUSTOMER }
+enum SubscriptionStatus { TRIAL ACTIVE PAST_DUE CANCELED EXPIRED }
+enum ApplicationKey { PRICING CONTRACT_KYC OPERATIONS DG_VAULT MARKETPLACE }
+model User { id String @id @default(uuid()) email String @unique passwordHash String? emailVerifiedAt DateTime? createdAt DateTime @default(now()) memberships Membership[] sessions Session[] auditLogs AuditLog[] }
+model Company { id String @id @default(uuid()) legalName String tradingName String? country String emirate String? tradeLicenseNumber String? tradeLicenseExpiry DateTime? vatTrn String? address String? website String? expectedUsers Int? createdAt DateTime @default(now()) memberships Membership[] subscriptions Subscription[] }
+model Membership { id String @id @default(uuid()) userId String companyId String role RoleKey @default(READ_ONLY) user User @relation(fields:[userId],references:[id],onDelete:Cascade) company Company @relation(fields:[companyId],references:[id],onDelete:Cascade) @@unique([userId,companyId]) }
+model Application { id String @id @default(uuid()) key ApplicationKey @unique name String isMarketplace Boolean @default(false) plans PlanApplication[] entitlements Entitlement[] }
+model Plan { id String @id @default(uuid()) name String code String @unique plans PlanApplication[] subscriptions Subscription[] }
+model PlanApplication { planId String applicationId String plan Plan @relation(fields:[planId],references:[id],onDelete:Cascade) application Application @relation(fields:[applicationId],references:[id],onDelete:Cascade) @@id([planId,applicationId]) }
+model Subscription { id String @id @default(uuid()) companyId String planId String? status SubscriptionStatus @default(TRIAL) simulator Boolean @default(true) startsAt DateTime @default(now()) endsAt DateTime? company Company @relation(fields:[companyId],references:[id],onDelete:Cascade) plan Plan? @relation(fields:[planId],references:[id]) entitlements Entitlement[] }
+model Entitlement { id String @id @default(uuid()) subscriptionId String applicationId String active Boolean @default(true) subscription Subscription @relation(fields:[subscriptionId],references:[id],onDelete:Cascade) application Application @relation(fields:[applicationId],references:[id]) @@unique([subscriptionId,applicationId]) }
+model Session { id String @id @default(uuid()) userId String tokenHash String @unique ipHash String? userAgent String? expiresAt DateTime user User @relation(fields:[userId],references:[id],onDelete:Cascade) }
+model AuditLog { id String @id @default(uuid()) companyId String? userId String? action String entityType String entityId String? metadata Json? createdAt DateTime @default(now()) user User? @relation(fields:[userId],references:[id]) @@index([companyId,createdAt]) }
